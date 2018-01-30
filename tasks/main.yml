@@ -1,0 +1,3 @@
+---
+- name: Include "{{cluster_users_type_of_node}}" recipe
+  include: "{{cluster_users_type_of_node}}.yml"
