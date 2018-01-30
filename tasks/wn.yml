@@ -1,23 +1,22 @@
 ---
-- block:
-  - name: Add user list to the system
-    user: 
-      name: "{{ item.value.name }}"
-      home: "/home/users/{{ item.value.name }}"
-      createhome: no
-      password: "{{ item.value.password }}"
-      uid: "{{ item.value.uid }}"
-      shell: /bin/bash
-      update_password: on_create
-      groups: "sudo"
+- name: Add user list to the system
+  user: 
+    name: "{{ item.value.name }}"
+    home: "/home/users/{{ item.value.name }}"
+    createhome: no
+    password: "{{ item.value.password }}"
+    uid: "{{ item.value.uid }}"
+    shell: /bin/bash
+    update_password: on_create
+    groups: "sudo"
+  with_dict: "{{ users_dict }}"
 
-  - name: Append user list to docker group
-    user: 
-      name: "{{ item.value.name }}"
-      groups: "docker"
-      append: yes
-    become: true
-  
+- name: Append user list to docker group
+  user: 
+    name: "{{ item.value.name }}"
+    groups: "docker"
+    append: yes
+  become: true
   with_dict: "{{ users_dict }}"
 
 - name: Add default users to docker group
