@@ -10,38 +10,17 @@
     groups: "sudo"     
     generate_ssh_key: yes
     ssh_key_file: "/home/users/{{ item.value.name }}/.ssh/id_rsa"
-  with_dict: "{{ users_dict }}"      
+  with_dict: "{{ users_dict }}"
 
-- name: Append user list to docker group
-  user: 
-    name: "{{ item.value.name }}"
-    groups: "docker"
-    append: yes
-  become: true
-  with_dict: "{{ users_dict }}"    
+
 
 - name: Copy ssh keys
   local_action: command cp /home/users/"{{ item.value.name }}"/.ssh/id_rsa.pub /tmp/"{{ item.value.name }}"_id_rsa.pub 
   creates: /tmp/"{{ item.value.name }}"_id_rsa.pub
-  with_dict: "{{ users_dict }}"    
+  with_dict: "{{ users_dict }}"
 
 - name: Add the authorized_key to the user "{{ item.value.name }}"
   authorized_key:
     user: "{{ item.value.name }}"
     key: "{{ lookup('file', '/tmp/' +  item.value.name  + '_id_rsa.pub') }}"  
   with_dict: "{{ users_dict }}"
-
-- name: Add default users to docker group
-  user: 
-    name: "{{ item }}"
-    groups: docker
-    append: yes
-  become: true
-  with_items: 
-    - ubuntu
-    - grycap
-
-- name: Kill SSH connection (needed for using the sudoless docker)
-  shell: sleep 1; pkill -u {{ ansible_ssh_user }} sshd
-  async: 3
-  poll: 2

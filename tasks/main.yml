@@ -1,3 +1,29 @@
 ---
 - name: Include "{{cluster_users_type_of_node}}" recipe
   include: "{{cluster_users_type_of_node}}.yml"
+
+- name: Append user list to docker group
+  user: 
+    name: "{{ item.value.name }}"
+    groups: "docker"
+    append: yes
+  become: true
+  with_dict: "{{ users_dict }}"
+
+- name: Add default users to docker group
+  user: 
+    name: "{{ item }}"
+    groups: docker
+    append: yes
+  become: true
+  with_items: 
+    - ubuntu
+    - grycap
+
+#- name: Kill SSH connection (needed for using the sudoless docker)
+#  shell: sleep 1; pkill -u {{ ansible_ssh_user }} sshd
+#  async: 3
+#  poll: 2
+
+- name: Reset ssh connection to allow user changes to affect 'current login user'
+  meta: reset_connection

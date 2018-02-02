@@ -10,26 +10,3 @@
     update_password: on_create
     groups: "sudo"
   with_dict: "{{ users_dict }}"
-
-- name: Append user list to docker group
-  user: 
-    name: "{{ item.value.name }}"
-    groups: "docker"
-    append: yes
-  become: true
-  with_dict: "{{ users_dict }}"
-
-- name: Add default users to docker group
-  user: 
-    name: "{{ item }}"
-    groups: docker
-    append: yes
-  become: true
-  with_items: 
-    - ubuntu
-    - grycap
-
-- name: Kill SSH
-  shell: sleep 1; pkill -u {{ ansible_ssh_user }} sshd
-  async: 3
-  poll: 2
