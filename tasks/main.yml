@@ -20,10 +20,11 @@
     - ubuntu
     - grycap
 
-#- name: Kill SSH connection (needed for using the sudoless docker)
-#  shell: sleep 1; pkill -u {{ ansible_ssh_user }} sshd
-#  async: 3
-#  poll: 2
+- name: Kill SSH connection (needed for using the sudoless docker)
+  shell: sleep 1; pkill -u {{ ansible_ssh_user }} sshd
+  async: 3
+  poll: 2
 
-- name: Reset ssh connection to allow user changes to affect 'current login user'
-  meta: reset_connection
+# Not working, check issue https://github.com/ansible/ansible/issues/27520
+#- name: Reset ssh connection to allow user changes to affect 'current login user'
+#  meta: reset_connection
