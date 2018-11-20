@@ -4,9 +4,10 @@
     name: "{{ item.value.name }}"
     home: "/home/users/{{ item.value.name }}"
     createhome: no
-    password: "{{ item.value.password }}"
+    password: "{{ item.value.password | password_hash('sha512') }}"
     uid: "{{ item.value.uid }}"
     shell: /bin/bash
     update_password: on_create
     groups: "sudo"
   with_dict: "{{ users_dict }}"
+  no_log: True

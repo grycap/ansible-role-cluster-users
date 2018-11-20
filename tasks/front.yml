@@ -3,7 +3,7 @@
   user: 
     name: "{{ item.value.name }}"
     home: "/home/users/{{ item.value.name }}"
-    password: "{{ item.value.password }}"
+    password: "{{ item.value.password | password_hash('sha512') }}"
     uid: "{{ item.value.uid }}"
     shell: /bin/bash
     update_password: on_create
@@ -11,8 +11,7 @@
     generate_ssh_key: yes
     ssh_key_file: "/home/users/{{ item.value.name }}/.ssh/id_rsa"
   with_dict: "{{ users_dict }}"
-
-
+  no_log: True
 
 - name: Copy ssh keys
   local_action: command cp /home/users/"{{ item.value.name }}"/.ssh/id_rsa.pub /tmp/"{{ item.value.name }}"_id_rsa.pub 
